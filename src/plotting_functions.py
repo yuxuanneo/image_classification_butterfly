@@ -30,3 +30,23 @@ def plot_value_counts(df, feature_x, fig_size = (11, 5)):
     ax.set(yticklabels=[])
     
     plt.show()
+
+def numerical_histogram_1d(df, cols_to_plot, targetcol):
+  '''
+    Plot 1 dimensional numerical data as a histogram
+
+    Args:
+        df (dataframe): dataframe to plot
+        dtype (str): columns with specific datatype to plot. Default is 'number'
+        targetcol: column to categorize by / hue
+
+    Returns:
+         histogram
+    '''
+  fig , axs = plt.subplots(len(cols_to_plot), 1, figsize=(18,40),sharex = False, sharey = False)
+  
+  for i, col in enumerate(cols_to_plot):
+      sns.histplot(x = col, data=df, ax = axs[i], hue = targetcol, multiple="dodge")
+      axs[i].grid()
+  
+  plt.tight_layout()
