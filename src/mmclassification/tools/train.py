@@ -20,9 +20,9 @@ from mmcls.utils import (auto_select_device, collect_env, get_root_logger,
                          setup_multi_processes)
 
 
-def parse_args():
+def parse_args(config_path):
     parser = argparse.ArgumentParser(description='Train a model')
-    parser.add_argument('config', help='train config file path')
+    parser.add_argument('config', default=config_path, help='train config file path')
     parser.add_argument('--work-dir', help='the dir to save logs and models')
     parser.add_argument(
         '--resume-from', help='the checkpoint file to resume from')
@@ -87,8 +87,8 @@ def parse_args():
     return args
 
 
-def main():
-    args = parse_args()
+def train_model(config_path="configs/resnet50_butterfly.py"):
+    args = parse_args(config_path)
 
     cfg = Config.fromfile(args.config)
     if args.cfg_options is not None:
@@ -202,4 +202,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    train_model()
