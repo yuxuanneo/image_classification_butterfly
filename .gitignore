@@ -39,6 +39,9 @@ check_img.ipynb
 # Ignore draw.io files
 *.drawio
 
+# Ignore working notebook
+testing.ipynb
+
 ####################
 ### Common files ###
 ####################

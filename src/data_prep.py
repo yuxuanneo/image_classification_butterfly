@@ -55,9 +55,9 @@ class DataPrep:
                            axis = 1)    
 
 def data_prep(df_path = "data/butterfly_mimics/images.csv"):
-    DataPrep = DataPrep(df_path)
-    DataPrep.split_data()
-    DataPrep.image_transfer()
+    data_prep_ = DataPrep(df_path)
+    data_prep_.split_data()
+    data_prep_.image_transfer()
     
 if __name__ == "__main__":
     data_prep()
