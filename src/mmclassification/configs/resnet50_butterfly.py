@@ -1,7 +1,7 @@
 _base_ = [
-    '../_base_/models/resnet50.py', # inherit model structure from resnet
-    '../_base_/datasets/butterfly_dataset.py', 
-    '../_base_/default_runtime.py'
+    '_base_/models/resnet50.py', # inherit model structure from resnet
+    '_base_/datasets/butterfly_dataset.py', 
+    '_base_/default_runtime.py'
 ]
 
 # Model config
