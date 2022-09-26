@@ -31,24 +31,21 @@ data = dict(
     train=dict(
         type=dataset_type,
         data_prefix='data/processed_data/train',
-        # ann_file='data/processed_data/meta/train.txt',
         classes=classes,
         pipeline=train_pipeline
     ),
     val=dict(
         type=dataset_type,
         data_prefix='data/processed_data/val',
-        # ann_file='data/processed_data/meta/val.txt',
         classes=classes,
         pipeline=test_pipeline
     ),
     test=dict(
         type=dataset_type,
         data_prefix='data/my_dataset/test',
-        # ann_file='data/my_dataset/meta/test.txt',
         classes=classes,
         pipeline=test_pipeline
     )
 )
 
-evaluation = dict(interval=1, metric='accuracy')
+evaluation = dict(interval=10, metric='accuracy')
