@@ -22,7 +22,7 @@ from mmcls.utils import (auto_select_device, collect_env, get_root_logger,
 
 def parse_args(config_path):
     parser = argparse.ArgumentParser(description='Train a model')
-    parser.add_argument('config', default=config_path, help='train config file path')
+    parser.add_argument('--config', default=config_path, help='train config file path')
     parser.add_argument('--work-dir', help='the dir to save logs and models')
     parser.add_argument(
         '--resume-from', help='the checkpoint file to resume from')
