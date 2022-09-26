@@ -198,7 +198,7 @@ def train_model(config_path="configs/resnet50_butterfly.py"):
         cfg,
         # distributed=distributed,
         # validate=(not args.no_validate),
-        timestamp=timestamp,
+        # timestamp=timestamp,
         device=cfg.device,
         meta=meta)
 
