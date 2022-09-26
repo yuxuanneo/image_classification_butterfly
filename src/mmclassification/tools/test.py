@@ -19,10 +19,10 @@ from mmcls.utils import (auto_select_device, get_root_logger,
                          wrap_non_distributed_model)
 
 
-def parse_args():
+def parse_args(config_path, checkpoint):
     parser = argparse.ArgumentParser(description='mmcls test model')
-    parser.add_argument('config', help='test config file path')
-    parser.add_argument('checkpoint', help='checkpoint file')
+    parser.add_argument('--config', default=config_path, help='test config file path')
+    parser.add_argument('--checkpoint', default=checkpoint, help='checkpoint file')
     parser.add_argument('--out', help='output result file')
     out_options = ['class_scores', 'pred_score', 'pred_label', 'pred_class']
     parser.add_argument(
@@ -104,8 +104,9 @@ def parse_args():
     return args
 
 
-def main():
-    args = parse_args()
+def model_inference(config_path="configs/resnet50_butterfly.py", 
+                    checkpoint="work_dirs/resnet50_butterfly/latest.pth"):
+    args = parse_args(config_path, checkpoint)
 
     cfg = mmcv.Config.fromfile(args.config)
     if args.cfg_options is not None:
@@ -161,6 +162,9 @@ def main():
         **cfg.data.get('test_dataloader', {}),
     }
     # the extra round_up data will be removed during gpu/cpu collect
+    
+    # stop here: you need to somehow read the test images and place it in the dataloader
+    
     data_loader = build_dataloader(dataset, **test_loader_cfg)
 
     # build the model and load checkpoint
@@ -202,6 +206,8 @@ def main():
         outputs = multi_gpu_test(model, data_loader, args.tmpdir,
                                  args.gpu_collect)
 
+    return outputs
+    
     rank, _ = get_dist_info()
     if rank == 0:
         results = {}
@@ -243,4 +249,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    model_inference()
