@@ -89,7 +89,7 @@ def parse_args(config_path):
     return args
 
 
-def train_model(config_path="configs/resnet50_butterfly.py"):
+def model_train(config_path="configs/resnet50_butterfly.py"):
     args = parse_args(config_path)
 
     cfg = Config.fromfile(args.config)
@@ -196,12 +196,12 @@ def train_model(config_path="configs/resnet50_butterfly.py"):
         model,
         datasets,
         cfg,
-        # distributed=distributed,
-        # validate=(not args.no_validate),
-        # timestamp=timestamp,
+        distributed=distributed,
+        validate=(not args.no_validate),
+        timestamp=timestamp,
         device=cfg.device,
         meta=meta)
 
 
 if __name__ == '__main__':
-    train_model()
+    model_train()
