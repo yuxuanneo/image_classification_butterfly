@@ -37,6 +37,7 @@ def parse_args(config_path, checkpoint):
         metavar='')
     parser.add_argument(
         '--metrics',
+        default = "accuracy", 
         type=str,
         nargs='+',
         help='evaluation metrics, which depends on the dataset, e.g., '
@@ -203,7 +204,7 @@ def model_inference(config_path="configs/resnet50_butterfly.py",
         outputs = multi_gpu_test(model, data_loader, args.tmpdir,
                                  args.gpu_collect)
 
-    return outputs
+    # return outputs
     
     rank, _ = get_dist_info()
     if rank == 0:
