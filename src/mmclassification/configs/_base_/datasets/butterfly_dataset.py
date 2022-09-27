@@ -42,7 +42,7 @@ data = dict(
     ),
     test=dict(
         type=dataset_type,
-        data_prefix='data/processed_data/test',
+        data_prefix='data/processed_data/holdout',
         classes=classes,
         pipeline=test_pipeline
     )
