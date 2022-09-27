@@ -23,7 +23,7 @@ def parse_args(config_path, checkpoint):
     parser = argparse.ArgumentParser(description='mmcls test model')
     parser.add_argument('--config', default=config_path, help='test config file path')
     parser.add_argument('--checkpoint', default=checkpoint, help='checkpoint file')
-    parser.add_argument('--out', help='output result file')
+    parser.add_argument('--out', default="predictions.json", help='output result file')
     out_options = ['class_scores', 'pred_score', 'pred_label', 'pred_class']
     parser.add_argument(
         '--out-items',
