@@ -1,3 +1,4 @@
+from concurrent.futures import process
 import shutil
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -5,8 +6,9 @@ from pathlib import Path
 import os
 
 class DataPrep:
-    def __init__(self, df_path):
+    def __init__(self, df_path, test_df_path):
         self.df_path = Path(df_path)
+        self.test_df_path = Path(test_df_path)
         
     def split_data(self):
         df_path = self.df_path
@@ -42,22 +44,49 @@ class DataPrep:
             os.makedirs(processed_data_directory/"processed_data"/split_status)
             for class_ in processed_df["name"].unique():
                 os.makedirs(processed_data_directory/"processed_data"/split_status/class_)
-                
-        def image_transfer_(img_name, split_status, name):
-            img_path = data_directory/"images"/(img_name + ".jpg")
-            processed_img_path = processed_data_directory/"processed_data"/split_status/name/(img_name + ".jpg")
-            
-            shutil.copyfile(img_path, processed_img_path)
-        
-        processed_df.apply(lambda x: image_transfer_(img_name = x["image"], 
+        # move images to new directory
+        processed_df.apply(lambda x: self.image_transfer_(img_name = x["image"], 
                                                      split_status = x["split_status"], 
-                                                     name = x["name"]), 
-                           axis = 1)    
+                                                     name = x["name"], 
+                                                     data_directory=data_directory,
+                                                     processed_data_directory=processed_data_directory), 
+                           axis = 1)
+        self.processed_data_directory = processed_data_directory
+            
+    def test_image_transfer(self):
+        test_df_path = self.test_df_path
+        processed_data_directory = self.processed_data_directory
+        data_directory = self.data_directory
+        test_df = pd.read_csv(test_df_path)
+        DEFAULT_CLASS = "tiger"
+        
+        # if test folder already exists, delete it 
+        if os.path.exists(processed_data_directory/"processed_data"/"test"):
+            shutil.rmtree(processed_data_directory/"processed_data"/"test")
+            
+        os.makedirs(processed_data_directory/"processed_data"/"test"/DEFAULT_CLASS)
+        # move images to new directory
+        test_df.apply(lambda x: self.image_transfer_(img_name = x["image"], 
+                                                split_status = "test", 
+                                                name = DEFAULT_CLASS, 
+                                                data_directory=data_directory,
+                                                processed_data_directory=processed_data_directory), 
+                      axis = 1)
+            
+    def image_transfer_(self, img_name, split_status, name, data_directory, processed_data_directory):
+        subfolder = "image_holdouts" if split_status == "test" else "images"
+        
+        img_path = data_directory/subfolder/(img_name + ".jpg")
+        processed_img_path = processed_data_directory/"processed_data"/split_status/name/(img_name + ".jpg")
+        
+        shutil.copyfile(img_path, processed_img_path)
 
-def data_prep(df_path = "data/butterfly_mimics/images.csv"):
-    data_prep_ = DataPrep(df_path)
+def data_prep(df_path = "data/butterfly_mimics/images.csv", 
+              test_df_path = "data/butterfly_mimics/image_holdouts.csv"):
+    data_prep_ = DataPrep(df_path, test_df_path)
     data_prep_.split_data()
     data_prep_.image_transfer()
+    data_prep_.test_image_transfer()
     
 if __name__ == "__main__":
     data_prep()

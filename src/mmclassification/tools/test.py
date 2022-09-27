@@ -138,7 +138,7 @@ def model_inference(config_path="configs/resnet50_butterfly.py",
         init_dist(args.launcher, **cfg.dist_params)
 
     dataset = build_dataset(cfg.data.test, default_args=dict(test_mode=True))
-
+    
     # build the dataloader
     # The default loader config
     loader_cfg = dict(
@@ -162,9 +162,6 @@ def model_inference(config_path="configs/resnet50_butterfly.py",
         **cfg.data.get('test_dataloader', {}),
     }
     # the extra round_up data will be removed during gpu/cpu collect
-    
-    # stop here: you need to somehow read the test images and place it in the dataloader
-    
     data_loader = build_dataloader(dataset, **test_loader_cfg)
 
     # build the model and load checkpoint
