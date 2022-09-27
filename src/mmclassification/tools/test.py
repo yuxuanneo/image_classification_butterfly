@@ -94,7 +94,7 @@ def parse_args(config_path, checkpoint):
         help='job launcher')
     parser.add_argument('--local_rank', type=int, default=0)
     parser.add_argument('--device', help='device used for testing')
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
     if 'LOCAL_RANK' not in os.environ:
         os.environ['LOCAL_RANK'] = str(args.local_rank)
 
