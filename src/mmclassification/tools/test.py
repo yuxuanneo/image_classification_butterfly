@@ -203,8 +203,6 @@ def model_inference(config_path="configs/resnet50_butterfly.py",
             broadcast_buffers=False)
         outputs = multi_gpu_test(model, data_loader, args.tmpdir,
                                  args.gpu_collect)
-
-    return outputs
     
     rank, _ = get_dist_info()
     if rank == 0:
