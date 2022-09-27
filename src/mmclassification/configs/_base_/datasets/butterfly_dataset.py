@@ -42,7 +42,7 @@ data = dict(
     ),
     test=dict(
         type=dataset_type,
-        data_prefix='data/my_dataset/test',
+        data_prefix='data/processed_data/test',
         classes=classes,
         pipeline=test_pipeline
     )
