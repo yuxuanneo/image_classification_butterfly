@@ -63,8 +63,10 @@ class DataPrep:
         # if test folder already exists, delete it 
         if os.path.exists(processed_data_directory/"processed_data"/"test"):
             shutil.rmtree(processed_data_directory/"processed_data"/"test")
-            
-        os.makedirs(processed_data_directory/"processed_data"/"test"/DEFAULT_CLASS)
+        
+        for class_ in self.processed_df["name"].unique():
+            os.makedirs(processed_data_directory/"processed_data"/"test"/class_)
+        
         # move images to new directory
         test_df.apply(lambda x: self.image_transfer_(img_name = x["image"], 
                                                 split_status = "test", 
