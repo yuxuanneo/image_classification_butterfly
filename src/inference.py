@@ -1,9 +1,8 @@
 from mmclassification.mmcls.apis.inference import init_model, inference_model
-import mmcv
+# import mmcv
 import pandas as pd
-from pathlib import Path
 
-def inference(config_file, checkpoint_file)
+def inference(test_df_path, config_file, checkpoint_file)
     # Specify the path to model config and checkpoint file
     config_file = config_file # 'configs/faster_rcnn/faster_rcnn_r50_fpn_1x_coco.py'
     checkpoint_file = checkpoint_file # 'checkpoints/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth'
