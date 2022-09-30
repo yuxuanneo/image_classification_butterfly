@@ -1,4 +1,3 @@
-from concurrent.futures import process
 import shutil
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -7,10 +6,19 @@ import os
 
 class DataPrep:
     def __init__(self, df_path, test_df_path):
+        """
+        Args:
+            df_path (str): file path to the csv file holding annotation info of train images
+            test_df_path (str): file path to the csv file holding annotation info of test (or holdout) images
+        """
         self.df_path = Path(df_path)
         self.test_df_path = Path(test_df_path)
         
     def split_data(self):
+        """
+        Splits images into train-val-test set. the processed df with train-val-test splits are then saved 
+        as an attribute
+        """
         df_path = self.df_path
         df = pd.read_csv(df_path)
         y = df["name"]
@@ -32,6 +40,28 @@ class DataPrep:
         self.data_directory = data_directory
 
     def image_transfer(self):
+        """
+        Moves images from the default file structure to one the following structure that suits mmclassification:
+        |- data
+            |- processed_data
+                |- train
+                    |- class_1
+                        |- img_1
+                        |- img_2
+                        ...
+                |- val
+                    |- class_1
+                        |- img_1
+                        |- img_2
+                        ...
+                |- test
+                    |- class_1
+                        |- img_1
+                        |- img_2
+                        ...
+        
+        This method populates images in the train and val sets. 
+        """
         processed_df = self.processed_df
         data_directory = self.data_directory
         processed_data_directory = data_directory.parent
@@ -47,13 +77,16 @@ class DataPrep:
         # move images to new directory
         processed_df.apply(lambda x: self.image_transfer_(img_name = x["image"], 
                                                      split_status = x["split_status"], 
-                                                     name = x["name"], 
-                                                     data_directory=data_directory,
-                                                     processed_data_directory=processed_data_directory), 
+                                                     name = x["name"]), 
                            axis = 1)
         self.processed_data_directory = processed_data_directory
             
     def test_image_transfer(self):
+        """
+        Similar method to image_transfer, except that this method is for the test set. Since the pathing and file
+        structure of the test data is different from that of train/val data, a separate method is written for the 
+        test set. 
+        """
         test_df_path = self.test_df_path
         processed_data_directory = self.processed_data_directory
         data_directory = self.data_directory
@@ -70,12 +103,21 @@ class DataPrep:
         # move images to new directory
         test_df.apply(lambda x: self.image_transfer_(img_name = x["image"], 
                                                 split_status = "test", 
-                                                name = DEFAULT_CLASS, 
-                                                data_directory=data_directory,
-                                                processed_data_directory=processed_data_directory), 
+                                                name = DEFAULT_CLASS), 
                       axis = 1)
             
-    def image_transfer_(self, img_name, split_status, name, data_directory, processed_data_directory):
+    def image_transfer_(self, img_name, split_status, name):
+        """
+        Helper method that moves the actual file from one folder to another. This will be called by the 
+        image transfer mmethods. 
+
+        Args:
+            img_name (str): file name of image 
+            split_status (str): whether the image is in the train/test/val sets
+            name (str): class label of image
+        """
+        data_directory = self.data_directory
+        processed_data_directory = self.processed_data_directory
         subfolder = "image_holdouts" if split_status == "test" else "images"
         
         img_path = data_directory/subfolder/(img_name + ".jpg")
@@ -85,6 +127,16 @@ class DataPrep:
 
 def data_prep(df_path = "data/butterfly_mimics/images.csv", 
               test_df_path = "data/butterfly_mimics/image_holdouts.csv"):
+    """
+    Convenience function that instantiates the DataPrep class, then split dataset into train-val-test sets. Finally,
+    move images into a folder structure that is suitable for mmclassification library.
+
+    Args:
+        df_path (str, optional): file path to the csv file holding annotation info of train images. 
+        Defaults to "data/butterfly_mimics/images.csv".
+        test_df_path (str, optional): file path to the csv file holding annotation info of test (or holdout) images. 
+        Defaults to "data/butterfly_mimics/image_holdouts.csv".
+    """
     data_prep_ = DataPrep(df_path, test_df_path)
     data_prep_.split_data()
     data_prep_.image_transfer()
