@@ -23,5 +23,5 @@ optimizer_config = dict(grad_clip=None)
 # learning policy
 checkpoint_config = dict(interval=10)
 lr_config = dict(policy='step', step=[15])
-runner = dict(type='EpochBasedRunner', max_epochs=100)
+runner = dict(type='EpochBasedRunner', max_epochs=200)
 log_config = dict(interval=100)

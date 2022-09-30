@@ -1,5 +1,4 @@
 from src.mmclassification.mmcls.apis.inference import init_model, inference_model
-# import mmcv
 import pandas as pd
 from pathlib import Path
 
@@ -22,4 +21,7 @@ def inference(test_df_path, config_file, checkpoint_file,
         pred = inference_model(model, str(full_img_path))
         preds.append(pred)
 
-    return preds
+    preds_class = [pred["pred_class"] for pred in preds]
+    test_df["name"] = preds_class
+    
+    return test_df
