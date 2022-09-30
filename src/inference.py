@@ -19,7 +19,7 @@ def inference(test_df_path, config_file, checkpoint_file,
     preds = []
     for img_name in images:
         full_img_path = data_path/(img_name +  ".jpg")
-        pred = inference_model(model, full_img_path)
+        pred = inference_model(model, str(full_img_path))
         preds.append(pred)
 
     return preds
