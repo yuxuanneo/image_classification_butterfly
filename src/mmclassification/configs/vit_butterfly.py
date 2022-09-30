@@ -1,20 +1,32 @@
 _base_ = [
-    '_base_/models/resnet50.py', # inherit model structure from resnet
+    '_base_\models\vit-large-p32.py', # inherit model structure from resnet
     '_base_/datasets/butterfly_dataset.py', 
     '_base_/default_runtime.py'
-]
-
-# Model config
+    
+# model settings
 model = dict(
+    type='ImageClassifier',
     backbone=dict(
-        frozen_stages=2,
-        init_cfg=dict(
-            type='Pretrained',
-            checkpoint='https://download.openmmlab.com/mmclassification/v0/resnet/resnet50_8xb32_in1k_20210831-ea4938fc.pth',
-            prefix='backbone',
-        )),
-    head=dict(num_classes=6),
-)
+        type='VisionTransformer',
+        arch='l',
+        img_size=224,
+        patch_size=32,
+        drop_rate=0.1,
+        init_cfg=[
+            dict(
+                type='Kaiming',
+                layer='Conv2d',
+                mode='fan_in',
+                nonlinearity='linear')
+        ]),
+    neck=None,
+    head=dict(
+        type='VisionTransformerClsHead',
+        num_classes=6,
+        in_channels=1024,
+        loss=dict(type='CrossEntropyLoss', loss_weight=1.0),
+        topk=(1, 5),
+    ))
 
 # Training schedule config
 # lr is set for a batch size of 128
