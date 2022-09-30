@@ -2,7 +2,10 @@ _base_ = [
     '_base_/models/vit-large-p32.py', # inherit model structure from resnet
     '_base_/datasets/butterfly_dataset.py', 
     '_base_/default_runtime.py']
-    
+
+# data settings
+data = dict(samples_per_gpu = 64)
+
 # model settings
 model = dict(
     type='ImageClassifier',
