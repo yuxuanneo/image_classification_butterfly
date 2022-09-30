@@ -1,4 +1,4 @@
-from mmclassification.mmcls.apis.inference import init_model, inference_model
+from src.mmclassification.mmcls.apis.inference import init_model, inference_model
 # import mmcv
 import pandas as pd
 
