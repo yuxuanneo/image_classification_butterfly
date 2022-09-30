@@ -3,7 +3,7 @@ from src.mmclassification.mmcls.apis.inference import init_model, inference_mode
 import pandas as pd
 from pathlib import Path
 
-def inference(test_df_path, config_file, checkpoint_file, 
+def inference(test_df_name, config_file, checkpoint_file, 
               data_path = "data/butterfly_mimics/image_holdouts"):
     # Specify the path to model config and checkpoint file
     data_path = Path(data_path)
@@ -16,7 +16,7 @@ def inference(test_df_path, config_file, checkpoint_file,
     model = init_model(config_file, checkpoint_file, device='cuda:0')
 
     # test a single image and show the results
-    test_df = pd.read_csv(test_df_path)
+    test_df = pd.read_csv(test_df_name)
     images = test_df["image"].to_list()
     preds = []
     for img_name in images:
