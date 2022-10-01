@@ -41,7 +41,12 @@ def train_model(data_dir='data/processed_data',
                     for x in ['train', 'val', 'test']}
     dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batch_size,
                                                 shuffle=True, num_workers=4)
-                for x in ['train', 'val', 'test']}
+                for x in ['train', 'val']}
+    dataloaders['test'] = torch.utils.data.DataLoader(image_datasets[x], 
+                                                      batch_size=1,
+                                                      shuffle=True, 
+                                                      num_workers=4)
+    
     dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val', 'test']}
     class_names = image_datasets['train'].classes
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
