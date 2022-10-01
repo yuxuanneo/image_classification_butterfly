@@ -63,10 +63,11 @@ def train_model(data_dir='data/processed_data',
                        optimizer=optimizer_conv,
                        scheduler=exp_lr_scheduler, 
                        num_epochs=num_epochs, 
-                       dataloaders=dataloaders)
+                       dataloaders=dataloaders,
+                       device=device)
     return model_conv
     
-def train(model, criterion, optimizer, scheduler, num_epochs, dataloaders):
+def train(model, criterion, optimizer, scheduler, num_epochs, dataloaders, device):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
