@@ -42,7 +42,7 @@ def train_model(data_dir='data/processed_data',
     dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batch_size,
                                                 shuffle=True, num_workers=4)
                 for x in ['train', 'val']}
-    dataloaders['test'] = torch.utils.data.DataLoader(image_datasets[x], 
+    dataloaders['test'] = torch.utils.data.DataLoader(image_datasets['test'], 
                                                       batch_size=1,
                                                       shuffle=True, 
                                                       num_workers=4)
