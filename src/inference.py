@@ -34,9 +34,6 @@ def inference_torch(model, dataloaders):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     for (inputs, _), (file_path, folder_idx) in zip(dataloaders["test"], dataloaders["test"].dataset.imgs):
-        print(input)
-        print(folder_idx)
-        print(file_path)
         
         class_to_idx = dataloaders["test"].dataset.class_to_idx 
         idx_to_class = {k:v for v,k in class_to_idx.items()}
@@ -50,4 +47,10 @@ def inference_torch(model, dataloaders):
             
             img_name = file_path.split("/")[-1].split(".")[0]
             images.append(img_name)
-    return all_preds, images
+            
+    all_preds = [x.item() for x in all_preds]
+    
+    df = pd.DataFrame({'image': images, 
+                       'name': all_preds})
+    
+    return df
