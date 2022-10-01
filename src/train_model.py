@@ -58,16 +58,18 @@ def train_model(data_dir='data/processed_data',
     # Decay LR by a factor of 0.1 every 7 epochs
     exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
     
+    print(f"device: {device}")
     model_conv = train(model=model_conv,
                        criterion=criterion, 
                        optimizer=optimizer_conv,
                        scheduler=exp_lr_scheduler, 
                        num_epochs=num_epochs, 
                        dataloaders=dataloaders,
-                       device=device)
+                       device=device,
+                       dataset_sizes=dataset_sizes)
     return model_conv
     
-def train(model, criterion, optimizer, scheduler, num_epochs, dataloaders, device):
+def train(model, criterion, optimizer, scheduler, num_epochs, dataloaders, device, dataset_sizes):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
