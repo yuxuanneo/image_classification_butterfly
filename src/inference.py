@@ -31,9 +31,9 @@ def inference_torch(model, dataloaders):
     all_preds = []
     images = []
     for (inputs, folder_idx), (file_path, _) in zip(dataloaders["test"], dataloaders["test"].dataset.imgs):
-        folder_idx = folder_name.item()
+        folder_idx = folder_idx.item()
         print(input)
-        print(folder_name)
+        print(folder_idx)
         print(file_path)
         
         class_to_idx = dataloaders["test"].dataset.class_to_idx 
