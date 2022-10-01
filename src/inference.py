@@ -1,4 +1,4 @@
-from src.mmclassification.mmcls.apis.inference import init_model, inference_model
+# from src.mmclassification.mmcls.apis.inference import init_model, inference_model
 import pandas as pd
 from pathlib import Path
 
