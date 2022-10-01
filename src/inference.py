@@ -31,6 +31,12 @@ def inference_torch(model, dataloaders):
     all_preds = []
     images = []
     for (inputs, folder_name), (file_path, _) in zip(dataloaders["test"], dataloaders["test"].dataset.imgs):
+        print(input)
+        print(folder_name)
+        print(file_path)
+        
+        
+        
         if folder_name == "tiger":
             inputs = inputs.to(device)
             outputs = model(inputs)
