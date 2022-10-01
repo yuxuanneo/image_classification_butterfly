@@ -25,3 +25,14 @@ def inference(test_df_path, config_file, checkpoint_file,
     test_df["name"] = preds_class
     
     return test_df
+
+def inference_torch(model, dataloaders):
+    model.eval() # set to eval mode
+    all_preds = []
+    for inputs, _ in dataloaders["test"]:
+        inputs = inputs.to(device)
+        outputs = model(inputs)
+        _, preds = torch.max(outputs, 1)
+        all_preds.append(preds)
+        
+    return all_preds

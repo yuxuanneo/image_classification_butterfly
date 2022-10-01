@@ -32,11 +32,11 @@ def train_model(data_dir='data/processed_data',
 
     image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
                                             data_transforms[x])
-                    for x in ['train', 'val']}
+                    for x in ['train', 'val', 'test']}
     dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=batch_size,
                                                 shuffle=True, num_workers=4)
-                for x in ['train', 'val']}
-    dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
+                for x in ['train', 'val', 'test']}
+    dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val', 'test']}
     class_names = image_datasets['train'].classes
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     
@@ -67,7 +67,7 @@ def train_model(data_dir='data/processed_data',
                        dataloaders=dataloaders,
                        device=device,
                        dataset_sizes=dataset_sizes)
-    return model_conv
+    return model_conv, dataloaders, image_datasets
     
 def train(model, criterion, optimizer, scheduler, num_epochs, dataloaders, device, dataset_sizes):
     since = time.time()
