@@ -8,6 +8,7 @@ import torchvision
 from torchvision import datasets, models, transforms
 import os
 import time
+import copy
 
 def train_model(data_dir='data/processed_data', 
                 batch_size=4, 
