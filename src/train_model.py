@@ -6,6 +6,7 @@ import torch.backends.cudnn as cudnn
 import numpy as np
 import torchvision
 from torchvision import datasets, models, transforms
+import os
 
 def train_model(data_dir='data/processed_data', 
                 batch_size=4, 
