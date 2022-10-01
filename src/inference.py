@@ -1,6 +1,7 @@
 # from src.mmclassification.mmcls.apis.inference import init_model, inference_model
 import pandas as pd
 from pathlib import Path
+import torch
 
 def inference(test_df_path, config_file, checkpoint_file, 
               data_path = "data/butterfly_mimics/image_holdouts"):
@@ -30,6 +31,8 @@ def inference_torch(model, dataloaders):
     model.eval() # set to eval mode
     all_preds = []
     images = []
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     for (inputs, folder_idx), (file_path, _) in zip(dataloaders["test"], dataloaders["test"].dataset.imgs):
         folder_idx = folder_idx.item()
         print(input)
