@@ -33,8 +33,7 @@ def inference_torch(model, dataloaders):
     images = []
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    for (inputs, folder_idx), (file_path, _) in zip(dataloaders["test"], dataloaders["test"].dataset.imgs):
-        folder_idx = folder_idx.item()
+    for (inputs, _), (file_path, folder_idx) in zip(dataloaders["test"], dataloaders["test"].dataset.imgs):
         print(input)
         print(folder_idx)
         print(file_path)
