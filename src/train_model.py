@@ -73,7 +73,7 @@ def train_model(data_dir='data/processed_data',
                        dataloaders=dataloaders,
                        device=device,
                        dataset_sizes=dataset_sizes)
-    return model_conv, dataloaders, image_datasets
+    return model_conv, dataloaders
     
 def train(model, criterion, optimizer, scheduler, num_epochs, dataloaders, device, dataset_sizes):
     since = time.time()

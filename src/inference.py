@@ -29,10 +29,14 @@ def inference(test_df_path, config_file, checkpoint_file,
 def inference_torch(model, dataloaders):
     model.eval() # set to eval mode
     all_preds = []
-    for inputs, _ in dataloaders["test"]:
-        inputs = inputs.to(device)
-        outputs = model(inputs)
-        _, preds = torch.max(outputs, 1)
-        all_preds.append(preds)
-        
-    return all_preds
+    images = []
+    for (inputs, folder_name), (file_path, _) in zip(dataloaders["test"], dataloaders["test"].dataset.imgs):
+        if folder_name == "tiger":
+            inputs = inputs.to(device)
+            outputs = model(inputs)
+            _, preds = torch.max(outputs, 1)
+            all_preds.append(preds)
+            
+            img_name = file_path.split("/")[-1].split(".")[0]
+            images.append(img_name)
+    return all_preds, images
