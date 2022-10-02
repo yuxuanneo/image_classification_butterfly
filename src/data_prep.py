@@ -11,7 +11,7 @@ class DataPrep:
             df_path (str): file path to the csv file holding annotation info of train images
         """
         self.data_path = Path(data_path)
-        self.df_path = Path(df_path)/"images.csv"
+        self.df_path = Path(data_path)/"images.csv"
 
         
     def split_data(self):
