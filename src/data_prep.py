@@ -5,14 +5,14 @@ from pathlib import Path
 import os
 
 class DataPrep:
-    def __init__(self, df_path, test_df_path):
+    def __init__(self, data_path):
         """
         Args:
             df_path (str): file path to the csv file holding annotation info of train images
-            test_df_path (str): file path to the csv file holding annotation info of test (or holdout) images
         """
-        self.df_path = Path(df_path)
-        self.test_df_path = Path(test_df_path)
+        self.data_path = Path(data_path)
+        self.df_path = Path(df_path)/"images.csv"
+
         
     def split_data(self):
         """
@@ -23,7 +23,9 @@ class DataPrep:
         df = pd.read_csv(df_path)
         y = df["name"]
         X = df.drop(columns = "name")
-        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.33, random_state=42, stratify=y)
+        X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+        X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, test_size=0.33, random_state=42, stratify=y_val_test)
+
         
         train_df = X_train.copy()
         train_df["name"] = y_train
@@ -33,9 +35,15 @@ class DataPrep:
         val_df["name"] = y_val
         val_df["split_status"] = "val"
         
-        processed_df = train_df.append(val_df)
+        test_df = X_test.copy()
+        test_df["name"] = y_test
+        test_df["split_status"] = "test"    
+            
+        processed_df = train_df.append(val_df).append(test_df)
         data_directory = df_path.parent # get data directory
         processed_df.to_csv(data_directory/"images_processed.csv")
+        
+        print(f"data distribution: \n {processed_df.split_status.value_counts()}")
         self.processed_df = processed_df
         self.data_directory = data_directory
 
@@ -65,6 +73,7 @@ class DataPrep:
         processed_df = self.processed_df
         data_directory = self.data_directory
         processed_data_directory = data_directory.parent
+        self.processed_data_directory = processed_data_directory
         
         # creating new file directories to hold sorted data
         if os.path.exists(processed_data_directory/"processed_data"):
@@ -79,7 +88,6 @@ class DataPrep:
                                                      split_status = x["split_status"], 
                                                      name = x["name"]), 
                            axis = 1)
-        self.processed_data_directory = processed_data_directory
             
     def test_image_transfer(self):
         """
@@ -118,26 +126,27 @@ class DataPrep:
         """
         data_directory = self.data_directory
         processed_data_directory = self.processed_data_directory
-        subfolder = "image_holdouts" if split_status == "test" else "images"
+        # subfolder = "image_holdouts" if split_status == "test" else "images"
+        subfolder = "images"
         
         img_path = data_directory/subfolder/(img_name + ".jpg")
         processed_img_path = processed_data_directory/"processed_data"/split_status/name/(img_name + ".jpg")
         
         shutil.copyfile(img_path, processed_img_path)
 
-def data_prep(df_path, test_df_path):
+def data_prep(df_path):
     """
     Convenience function that instantiates the DataPrep class, then split dataset into train-val-test sets. Finally,
     move images into a folder structure that is suitable for mmclassification library.
 
     Args:
         df_path (str): file path to the csv file holding annotation info of train images. 
-        test_df_path (str): file path to the csv file holding annotation info of test (or holdout) images. 
     """
-    data_prep_ = DataPrep(df_path, test_df_path)
+    data_prep_ = DataPrep(df_path)
     data_prep_.split_data()
     data_prep_.image_transfer()
-    data_prep_.test_image_transfer()
+    print("data folder structure has been set up")
+    # data_prep_.test_image_transfer()
     
 if __name__ == "__main__":
-    data_prep()
+    data_prep(df_path = "data/butterfly_mimics/images.csv")

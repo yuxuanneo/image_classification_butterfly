@@ -105,7 +105,7 @@ def parse_args(config_path, checkpoint):
     return args
 
 
-def model_inference(config_path="configs/resnet50_butterfly.py", 
+def test_model_mmcls(config_path="configs/resnet50_butterfly.py", 
                     checkpoint="work_dirs/resnet50_butterfly/latest.pth"):
     args = parse_args(config_path, checkpoint)
 
