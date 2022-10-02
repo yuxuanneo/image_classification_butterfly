@@ -125,17 +125,14 @@ class DataPrep:
         
         shutil.copyfile(img_path, processed_img_path)
 
-def data_prep(df_path = "data/butterfly_mimics/images.csv", 
-              test_df_path = "data/butterfly_mimics/image_holdouts.csv"):
+def data_prep(df_path, test_df_path):
     """
     Convenience function that instantiates the DataPrep class, then split dataset into train-val-test sets. Finally,
     move images into a folder structure that is suitable for mmclassification library.
 
     Args:
-        df_path (str, optional): file path to the csv file holding annotation info of train images. 
-        Defaults to "data/butterfly_mimics/images.csv".
-        test_df_path (str, optional): file path to the csv file holding annotation info of test (or holdout) images. 
-        Defaults to "data/butterfly_mimics/image_holdouts.csv".
+        df_path (str): file path to the csv file holding annotation info of train images. 
+        test_df_path (str): file path to the csv file holding annotation info of test (or holdout) images. 
     """
     data_prep_ = DataPrep(df_path, test_df_path)
     data_prep_.split_data()

@@ -15,7 +15,7 @@ EDA has been performed and documented in a Jupyter Notebook, `eda.ipynb`. Below 
 
 # Baseline Models
 
-## 1. Data Prepataion
+## 1. Data Preparation
 In this project, transfer learning of models from both [torchvision](https://pytorch.org/vision/main/models/resnet.html) and [MMClassification](https://github.com/open-mmlab/mmclassification) were used. 
 
 In order to accomodate the folder structure to that used in the two repositories, a [data preparation script](src/data_prep.py) is written. Essentially, this script parses through the original file structure that the raw dataset uses, then performs a train-test-split of the images. Finally, the images are moved into the following file structure, depending on their train/test classification and their labels.
@@ -42,7 +42,24 @@ In order to accomodate the folder structure to that used in the two repositories
 ## 2. Model Training
 For GPU access (model training would take significantly longer otherwise) during model training, I have an accompanying Google Colab notebook where the models are trained. 
 
-talk about the different model architectures experimented with
+For the MMClassification repository, the models experimented with thus far are: 
+- [Vision Transformer (ViT)](https://arxiv.org/pdf/2010.11929.pdf)
+- [ResNet-50](https://openaccess.thecvf.com/content_cvpr_2016/html/He_Deep_Residual_Learning_CVPR_2016_paper.html)
+
+For the torchvision models, I have experimented with ResNet-101. 
+
+
+
+For all model implementations, the models have been instantiated with pre-trained weights (trained on ImageNet). 
+
+I then fine-tune the network following the approach outlined in the [cs231n notes](https://cs231n.github.io/transfer-learning/). Instead of freezing the network and replacing only the classifier head, I opted to fine-tune the weights across the pretrained network through backpropagation. 
+
+maybe can quote this for the approach in mmclass: by freezing the earlier layers, we retain the earlier layers of the network, which have been observed to focus on more generic features (e.g. edge detectors or colour blob detectors) and instead finetune the later layers. The later layers have been found to be more specific to the details contained in the initial dataset. As ImageNet contains many dog breeds, the network may be more sensitive to featurse differentiating between dog breeds, instead of differentiating between butterfly species.
+
+
+
+
+<font color='red'> **maybe write abit on why transfer learning impt** </font>
 
 # Future Work
 While the model accuracy already exceeds 90%, the finetuning of the hyperparameters of a chosen model is yet to be completed. Future development of the project would involve the resplitting of the images into train/validation/test sets, where the validation is the set that will be used for the finetuning and the test set will be used for the final assessment of the fine-tuned model. 

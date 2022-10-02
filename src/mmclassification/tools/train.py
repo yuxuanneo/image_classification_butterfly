@@ -89,7 +89,8 @@ def parse_args(config_path):
     return args
 
 
-def model_train(config_path="configs/resnet50_butterfly.py"):
+def train_model_mmcls(config_path="configs/resnet50_butterfly.py"):
+    print(f"config path used for mmcls: {config_path}")
     args = parse_args(config_path)
 
     cfg = Config.fromfile(args.config)
@@ -205,4 +206,4 @@ def model_train(config_path="configs/resnet50_butterfly.py"):
 
 
 if __name__ == '__main__':
-    model_train()
+    train_model_mmcls()
