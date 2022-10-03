@@ -50,7 +50,7 @@ In order to accomodate the folder structure to that used in the repository, a [d
 ```
 
 ## 2. Model Training
-For GPU access (model training would take significantly longer otherwise) during model training, I have an accompanying Google Colab notebook where the models are trained. 
+For GPU access (model training would take significantly longer otherwise) during model training, I have an accompanying [Google Colab notebook](model_training.ipynb) where the models are trained. 
 
 The models experimented with thus far are: 
 - [Vision Transformer (ViT)](https://arxiv.org/pdf/2010.11929.pdf)
