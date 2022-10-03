@@ -5,15 +5,27 @@ from pathlib import Path
 import os
 
 class DataPrep:
-    def __init__(self, df_path):
-        self.df_path = Path(df_path)
+    def __init__(self, data_path):
+        """
+        Args:
+            df_path (str): file path to the csv file holding annotation info of train images
+        """
+        self.data_path = Path(data_path)
+        self.df_path = Path(data_path)/"images.csv"
+
         
     def split_data(self):
+        """
+        Splits images into train-val-test set. the processed df with train-val-test splits are then saved 
+        as an attribute
+        """
         df_path = self.df_path
         df = pd.read_csv(df_path)
         y = df["name"]
         X = df.drop(columns = "name")
-        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.33, random_state=42, stratify=y)
+        X_train, X_val_test, y_train, y_val_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+        X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, test_size=0.33, random_state=42, stratify=y_val_test)
+
         
         train_df = X_train.copy()
         train_df["name"] = y_train
@@ -23,16 +35,45 @@ class DataPrep:
         val_df["name"] = y_val
         val_df["split_status"] = "val"
         
-        processed_df = train_df.append(val_df)
+        test_df = X_test.copy()
+        test_df["name"] = y_test
+        test_df["split_status"] = "test"    
+            
+        processed_df = train_df.append(val_df).append(test_df)
         data_directory = df_path.parent # get data directory
         processed_df.to_csv(data_directory/"images_processed.csv")
+        
+        print(f"data distribution: \n {processed_df.split_status.value_counts()}")
         self.processed_df = processed_df
         self.data_directory = data_directory
 
     def image_transfer(self):
+        """
+        Moves images from the default file structure to one the following structure that suits mmclassification:
+        |- data
+            |- processed_data
+                |- train
+                    |- class_1
+                        |- img_1
+                        |- img_2
+                        ...
+                |- val
+                    |- class_1
+                        |- img_1
+                        |- img_2
+                        ...
+                |- test
+                    |- class_1
+                        |- img_1
+                        |- img_2
+                        ...
+        
+        This method populates images in the train and val sets. 
+        """
         processed_df = self.processed_df
         data_directory = self.data_directory
         processed_data_directory = data_directory.parent
+        self.processed_data_directory = processed_data_directory
         
         # creating new file directories to hold sorted data
         if os.path.exists(processed_data_directory/"processed_data"):
@@ -42,22 +83,70 @@ class DataPrep:
             os.makedirs(processed_data_directory/"processed_data"/split_status)
             for class_ in processed_df["name"].unique():
                 os.makedirs(processed_data_directory/"processed_data"/split_status/class_)
-                
-        def image_transfer_(img_name, split_status, name):
-            img_path = data_directory/"images"/(img_name + ".jpg")
-            processed_img_path = processed_data_directory/"processed_data"/split_status/name/(img_name + ".jpg")
-            
-            shutil.copyfile(img_path, processed_img_path)
-        
-        processed_df.apply(lambda x: image_transfer_(img_name = x["image"], 
+        # move images to new directory
+        processed_df.apply(lambda x: self.image_transfer_(img_name = x["image"], 
                                                      split_status = x["split_status"], 
                                                      name = x["name"]), 
-                           axis = 1)    
+                           axis = 1)
+            
+    def test_image_transfer(self):
+        """
+        Similar method to image_transfer, except that this method is for the test set. Since the pathing and file
+        structure of the test data is different from that of train/val data, a separate method is written for the 
+        test set. 
+        """
+        test_df_path = self.test_df_path
+        processed_data_directory = self.processed_data_directory
+        data_directory = self.data_directory
+        test_df = pd.read_csv(test_df_path)
+        DEFAULT_CLASS = "tiger"
+        
+        # if test folder already exists, delete it 
+        if os.path.exists(processed_data_directory/"processed_data"/"test"):
+            shutil.rmtree(processed_data_directory/"processed_data"/"test")
+        
+        for class_ in self.processed_df["name"].unique():
+            os.makedirs(processed_data_directory/"processed_data"/"test"/class_)
+        
+        # move images to new directory
+        test_df.apply(lambda x: self.image_transfer_(img_name = x["image"], 
+                                                split_status = "test", 
+                                                name = DEFAULT_CLASS), 
+                      axis = 1)
+            
+    def image_transfer_(self, img_name, split_status, name):
+        """
+        Helper method that moves the actual file from one folder to another. This will be called by the 
+        image transfer mmethods. 
 
-def data_prep(df_path = "data/butterfly_mimics/images.csv"):
+        Args:
+            img_name (str): file name of image 
+            split_status (str): whether the image is in the train/test/val sets
+            name (str): class label of image
+        """
+        data_directory = self.data_directory
+        processed_data_directory = self.processed_data_directory
+        # subfolder = "image_holdouts" if split_status == "test" else "images"
+        subfolder = "images"
+        
+        img_path = data_directory/subfolder/(img_name + ".jpg")
+        processed_img_path = processed_data_directory/"processed_data"/split_status/name/(img_name + ".jpg")
+        
+        shutil.copyfile(img_path, processed_img_path)
+
+def data_prep(df_path):
+    """
+    Convenience function that instantiates the DataPrep class, then split dataset into train-val-test sets. Finally,
+    move images into a folder structure that is suitable for mmclassification library.
+
+    Args:
+        df_path (str): file path to the csv file holding annotation info of train images. 
+    """
     data_prep_ = DataPrep(df_path)
     data_prep_.split_data()
     data_prep_.image_transfer()
+    print("data folder structure has been set up")
+    # data_prep_.test_image_transfer()
     
 if __name__ == "__main__":
-    data_prep()
+    data_prep(df_path = "data/butterfly_mimics/images.csv")

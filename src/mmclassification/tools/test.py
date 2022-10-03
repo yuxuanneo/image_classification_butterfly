@@ -19,11 +19,11 @@ from mmcls.utils import (auto_select_device, get_root_logger,
                          wrap_non_distributed_model)
 
 
-def parse_args():
+def parse_args(config_path, checkpoint):
     parser = argparse.ArgumentParser(description='mmcls test model')
-    parser.add_argument('config', help='test config file path')
-    parser.add_argument('checkpoint', help='checkpoint file')
-    parser.add_argument('--out', help='output result file')
+    parser.add_argument('--config', default=config_path, help='test config file path')
+    parser.add_argument('--checkpoint', default=checkpoint, help='checkpoint file')
+    parser.add_argument('--out', default="predictions.json", help='output result file')
     out_options = ['class_scores', 'pred_score', 'pred_label', 'pred_class']
     parser.add_argument(
         '--out-items',
@@ -37,6 +37,7 @@ def parse_args():
         metavar='')
     parser.add_argument(
         '--metrics',
+        default = "accuracy", 
         type=str,
         nargs='+',
         help='evaluation metrics, which depends on the dataset, e.g., '
@@ -94,7 +95,7 @@ def parse_args():
         help='job launcher')
     parser.add_argument('--local_rank', type=int, default=0)
     parser.add_argument('--device', help='device used for testing')
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
     if 'LOCAL_RANK' not in os.environ:
         os.environ['LOCAL_RANK'] = str(args.local_rank)
 
@@ -104,8 +105,9 @@ def parse_args():
     return args
 
 
-def main():
-    args = parse_args()
+def test_model_mmcls(config_path="configs/resnet50_butterfly.py", 
+                    checkpoint="work_dirs/resnet50_butterfly/latest.pth"):
+    args = parse_args(config_path, checkpoint)
 
     cfg = mmcv.Config.fromfile(args.config)
     if args.cfg_options is not None:
@@ -137,7 +139,7 @@ def main():
         init_dist(args.launcher, **cfg.dist_params)
 
     dataset = build_dataset(cfg.data.test, default_args=dict(test_mode=True))
-
+    
     # build the dataloader
     # The default loader config
     loader_cfg = dict(
@@ -201,7 +203,7 @@ def main():
             broadcast_buffers=False)
         outputs = multi_gpu_test(model, data_loader, args.tmpdir,
                                  args.gpu_collect)
-
+    
     rank, _ = get_dist_info()
     if rank == 0:
         results = {}
@@ -243,4 +245,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    model_inference()

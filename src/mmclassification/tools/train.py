@@ -89,7 +89,8 @@ def parse_args(config_path):
     return args
 
 
-def model_train(config_path="configs/resnet50_butterfly.py"):
+def train_model_mmcls(config_path="configs/resnet50_butterfly.py"):
+    print(f"config path used for mmcls: {config_path}")
     args = parse_args(config_path)
 
     cfg = Config.fromfile(args.config)
@@ -178,6 +179,7 @@ def model_train(config_path="configs/resnet50_butterfly.py"):
     model.init_weights()
 
     datasets = [build_dataset(cfg.data.train)]
+        
     if len(cfg.workflow) == 2:
         val_dataset = copy.deepcopy(cfg.data.val)
         val_dataset.pipeline = cfg.data.train.pipeline
@@ -204,4 +206,4 @@ def model_train(config_path="configs/resnet50_butterfly.py"):
 
 
 if __name__ == '__main__':
-    model_train()
+    train_model_mmcls()

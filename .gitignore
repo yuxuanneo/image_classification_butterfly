@@ -13,6 +13,7 @@ aisg-context/k8s/pvc/**
 aisg-context/k8s/secrets/**
 DocResources/**
 misc/**
+submissions/**
 
 # Except their sub-folders
 !logs/**/

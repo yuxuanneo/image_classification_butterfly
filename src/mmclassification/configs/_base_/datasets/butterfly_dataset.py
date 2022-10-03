@@ -2,9 +2,14 @@
 dataset_type = 'CustomDataset'
 classes = ['monarch', 'tiger', 'black', 'pipevine', 'viceroy', 'spicebush']  # The category names in dataset
 
+# img_norm_cfg = dict(
+#     mean=[115.512, 118.991, 77.582],
+#     std=[25.019, 24.291, 26.483],
+#     to_rgb=False)
+
 img_norm_cfg = dict(
-    mean=[115.512, 118.991, 77.582],
-    std=[25.019, 24.291, 26.483],
+    mean=[0.485, 0.456, 0.406],
+    std=[0.229, 0.224, 0.225],
     to_rgb=False)
 
 train_pipeline = [
@@ -21,7 +26,6 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='Resize', size=224),
     dict(type='Normalize', **img_norm_cfg),   
-    dict(type='CenterCrop', crop_size=224),
     dict(type='ImageToTensor', keys=['img']),
     dict(type='Collect', keys=['img'])
 ]
@@ -42,7 +46,7 @@ data = dict(
     ),
     test=dict(
         type=dataset_type,
-        data_prefix='data/my_dataset/test',
+        data_prefix='data/processed_data/val',
         classes=classes,
         pipeline=test_pipeline
     )
